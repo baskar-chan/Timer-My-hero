@@ -91,14 +91,10 @@
         .container {
             max-width: 1000px;
             margin: 0 auto;
-            background: var(--glass-light);
             padding: 25px;
             border-radius: 20px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
             margin-top: 20px;
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid var(--glass-border);
+            background: transparent;
         }
 
         h1 {
@@ -107,7 +103,6 @@
             margin-bottom: 25px;
             font-size: 2.2rem;
             padding-bottom: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
             text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
             font-weight: 600;
         }
@@ -131,15 +126,24 @@
         }
 
         .schedule-table th {
-            background: var(--glass-red);
-            color: white;
-            padding: 20px 15px;
-            font-size: 1.1rem;
-            font-weight: 600;
+            background: transparent;
+            color: #FFE500; /* تغییر به رنگ زرد درخشان */
+            padding: 22px 15px; /* افزایش padding برای متن بزرگتر */
+            font-size: 1.6rem; /* بزرگتر کردن سایز فونت */
+            font-weight: 900; /* کلفت‌تر */
             text-align: center;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            text-shadow: 
+                3px 0 0 #000, 
+                -3px 0 0 #000, 
+                0 3px 0 #000, 
+                0 -3px 0 #000, 
+                2px 2px 0 #000, 
+                -2px -2px 0 #000, 
+                2px -2px 0 #000, 
+                -2px 2px 0 #000; /* حاشیه سیاه کلفت‌تر */
         }
 
         .schedule-table td {
@@ -164,11 +168,19 @@
 
         /* Episode Styles */
         .episode-title {
-            font-weight: bold;
-            color: #fff;
+            font-weight: 900; /* کلفت‌تر */
+            color: #FFE500; /* تغییر به رنگ زرد درخشان */
             text-align: center;
-            font-size: 1.3rem;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            font-size: 1.5rem; /* بزرگتر کردن سایز فونت */
+            text-shadow: 
+                2px 0 0 #000, 
+                -2px 0 0 #000, 
+                0 2px 0 #000, 
+                0 -2px 0 #000, 
+                1.5px 1.5px 0 #000, 
+                -1.5px -1.5px 0 #000, 
+                1.5px -1.5px 0 #000, 
+                -1.5px 1.5px 0 #000; /* حاشیه سیاه */
         }
 
         .release-date {
@@ -181,24 +193,34 @@
         /* Timer Glassmorphism */
         .timer {
             font-family: 'Courier New', monospace;
-            font-size: 1.1rem;
-            font-weight: bold;
-            background: var(--glass-yellow);
+            font-size: 1.3rem; /* بزرگتر کردن سایز فونت */
+            font-weight: 900; /* کلفت‌تر */
+            background: rgba(255, 255, 255, 0.15); /* پس‌زمینه شیشه‌ای */
             padding: 14px 18px;
             border-radius: 10px;
             display: inline-block;
             min-width: 200px;
-            color: #b35900;
-            border: 1px solid rgba(255, 222, 89, 0.5);
+            color: #ffffff; /* رنگ سفید */
+            border: 1px solid rgba(255, 0, 0, 0.5); /* حاشیه قرمز */
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
+            text-shadow: 
+                2px 0 0 #ff0000, 
+                -2px 0 0 #ff0000, 
+                0 2px 0 #ff0000, 
+                0 -2px 0 #ff0000, 
+                1.5px 1.5px 0 #ff0000, 
+                -1.5px -1.5px 0 #ff0000, 
+                1.5px -1.5px 0 #ff0000, 
+                -1.5px 1.5px 0 #ff0000; /* حاشیه قرمز */
         }
 
         .timer.expired {
             background: rgba(240, 248, 240, 0.85);
             color: #2d862d;
             border-color: rgba(153, 204, 153, 0.5);
+            text-shadow: none; /* حذف حاشیه برای حالت expired */
         }
 
         /* Logo Styles - بدون حاشیه و سایه */
@@ -225,7 +247,6 @@
             color: rgba(255, 255, 255, 0.8);
             font-size: 0.9rem;
             padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         }
 
@@ -323,8 +344,7 @@
             .container {
                 padding: 15px;
                 width: 100%;
-                backdrop-filter: blur(12px);
-                -webkit-backdrop-filter: blur(12px);
+                background: transparent;
             }
             
             h1 {
@@ -353,21 +373,55 @@
             }
             
             .schedule-table th {
-                padding: 14px 8px;
+                padding: 16px 8px; /* افزایش padding برای متن بزرگتر */
+                background: transparent;
+                color: #FFE500; /* تغییر به رنگ زرد درخشان */
+                font-weight: 900; /* کلفت‌تر */
+                font-size: 1.3rem; /* بزرگتر کردن سایز فونت */
+                text-shadow: 
+                    2px 0 0 #000, 
+                    -2px 0 0 #000, 
+                    0 2px 0 #000, 
+                    0 -2px 0 #000, 
+                    1.5px 1.5px 0 #000, 
+                    -1.5px -1.5px 0 #000, 
+                    1.5px -1.5px 0 #000, 
+                    -1.5px 1.5px 0 #000; /* حاشیه سیاه کلفت‌تر */
+            }
+            
+            .episode-title {
+                font-weight: 900; /* کلفت‌تر */
+                color: #FFE500; /* تغییر به رنگ زرد درخشان */
+                font-size: 1.2rem; /* بزرگتر کردن سایز فونت */
+                text-shadow: 
+                    1.5px 0 0 #000, 
+                    -1.5px 0 0 #000, 
+                    0 1.5px 0 #000, 
+                    0 -1.5px 0 #000, 
+                    1px 1px 0 #000, 
+                    -1px -1px 0 #000, 
+                    1px -1px 0 #000, 
+                    -1px 1px 0 #000; /* حاشیه سیاه */
             }
             
             .timer {
-                font-size: 0.85rem;
+                font-size: 1.1rem; /* بزرگتر کردن سایز فونت */
+                font-weight: 900; /* کلفت‌تر */
                 min-width: 150px;
                 padding: 10px 12px;
+                text-shadow: 
+                    1.5px 0 0 #ff0000, 
+                    -1.5px 0 0 #ff0000, 
+                    0 1.5px 0 #ff0000, 
+                    0 -1.5px 0 #ff0000, 
+                    1px 1px 0 #ff0000, 
+                    -1px -1px 0 #ff0000, 
+                    1px -1px 0 #ff0000, 
+                    -1px 1px 0 #ff0000; /* حاشیه قرمز */
             }
             
             .logo {
                 max-width: 280px;
-            }
-            
-            .episode-title {
-                font-size: 1rem;
             }
             
             .release-date {
@@ -469,6 +523,7 @@
             
             .container {
                 padding: 12px;
+                background: transparent;
             }
             
             .schedule-table th,
@@ -478,21 +533,55 @@
             }
             
             .schedule-table th {
-                padding: 12px 6px;
+                padding: 14px 6px; /* افزایش padding برای متن بزرگتر */
+                background: transparent;
+                color: #FFE500; /* تغییر به رنگ زرد درخشان */
+                font-weight: 900; /* کلفت‌تر */
+                font-size: 1.2rem; /* بزرگتر کردن سایز فونت */
+                text-shadow: 
+                    2px 0 0 #000, 
+                    -2px 0 0 #000, 
+                    0 2px 0 #000, 
+                    0 -2px 0 #000, 
+                    1.5px 1.5px 0 #000, 
+                    -1.5px -1.5px 0 #000, 
+                    1.5px -1.5px 0 #000, 
+                    -1.5px 1.5px 0 #000; /* حاشیه سیاه کلفت‌تر */
+            }
+            
+            .episode-title {
+                font-weight: 900; /* کلفت‌تر */
+                color: #FFE500; /* تغییر به رنگ زرد درخشان */
+                font-size: 1.1rem; /* بزرگتر کردن سایز فونت */
+                text-shadow: 
+                    1.5px 0 0 #000, 
+                    -1.5px 0 0 #000, 
+                    0 1.5px 0 #000, 
+                    0 -1.5px 0 #000, 
+                    1px 1px 0 #000, 
+                    -1px -1px 0 #000, 
+                    1px -1px 0 #000, 
+                    -1px 1px 0 #000; /* حاشیه سیاه */
             }
             
             .timer {
-                font-size: 0.75rem;
+                font-size: 1rem; /* بزرگتر کردن سایز فونت */
+                font-weight: 900; /* کلفت‌تر */
                 min-width: 130px;
                 padding: 8px 10px;
+                text-shadow: 
+                    1.5px 0 0 #ff0000, 
+                    -1.5px 0 0 #ff0000, 
+                    0 1.5px 0 #ff0000, 
+                    0 -1.5px 0 #ff0000, 
+                    1px 1px 0 #ff0000, 
+                    -1px -1px 0 #ff0000, 
+                    1px -1px 0 #ff0000, 
+                    -1px 1px 0 #ff0000; /* حاشیه قرمز */
             }
             
             .logo {
                 max-width: 220px;
-            }
-            
-            .episode-title {
-                font-size: 0.9rem;
             }
             
             .release-date {
