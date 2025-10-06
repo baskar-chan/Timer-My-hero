@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Hero Academia - برنامه زمانی پخش</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --blue: #0b1a3a; /* آبی پررنگ */
+            --glass-light: rgba(255, 255, 255, 0.15);
+            --glass-medium: rgba(255, 255, 255, 0.25);
+            --glass-dark: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-red: linear-gradient(135deg, rgba(212, 0, 0, 0.7), rgba(255, 51, 51, 0.5));
+            --glass-yellow: rgba(255, 249, 230, 0.85);
+        }
+
+        /* General Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+            line-height: 1.6;
+            padding: 15px;
+            margin: 0;
+            min-height: 100vh;
+            
+            /* بک‌گراند آبی اکلیلی برای دسکتاپ */
+            background:
+                /* اکلیل‌های ریز */
+                radial-gradient(circle at 12% 18%, rgba(255,255,255,0.35) 0 1.6px, transparent 2px),
+                radial-gradient(circle at 32% 66%, rgba(255,255,255,0.32) 0 1.4px, transparent 2px),
+                radial-gradient(circle at 78% 24%, rgba(255,255,255,0.38) 0 1.8px, transparent 2.2px),
+                radial-gradient(circle at 55% 12%, rgba(255,255,255,0.30) 0 1.3px, transparent 2px),
+                radial-gradient(circle at 8% 82%, rgba(255,255,255,0.33) 0 1.5px, transparent 2.1px),
+                radial-gradient(circle at 90% 70%, rgba(255,255,255,0.34) 0 1.4px, transparent 2px),
+                radial-gradient(circle at 25% 40%, rgba(255,255,255,0.36) 0 1.5px, transparent 2px),
+                radial-gradient(circle at 65% 15%, rgba(255,255,255,0.32) 0 1.3px, transparent 2px),
+                radial-gradient(circle at 40% 85%, rgba(255,255,255,0.37) 0 1.6px, transparent 2px),
+                radial-gradient(circle at 75% 55%, rgba(255,255,255,0.31) 0 1.4px, transparent 2px),
+
+                /* اکلیل‌های درشت‌تر */
+                radial-gradient(circle at 15% 20%, rgba(255,255,255,0.45) 0 2.2px, transparent 2.6px),
+                radial-gradient(circle at 45% 75%, rgba(255,255,255,0.50) 0 2.4px, transparent 2.8px),
+                radial-gradient(circle at 80% 30%, rgba(255,255,255,0.42) 0 2px, transparent 2.4px),
+                radial-gradient(circle at 60% 50%, rgba(255,255,255,0.48) 0 2.2px, transparent 2.6px),
+                radial-gradient(circle at 30% 70%, rgba(255,255,255,0.46) 0 2.3px, transparent 2.7px),
+
+                /* لایه پس‌زمینه آبی */
+                linear-gradient(var(--blue), var(--blue));
+
+            background-blend-mode: screen, screen, screen, screen, screen, screen,
+                                screen, screen, screen, screen,
+                                screen, screen, screen, screen, screen,
+                                normal;
+
+            background-size:
+                180px 180px,
+                200px 200px,
+                220px 220px,
+                240px 240px,
+                260px 260px,
+                280px 280px,
+                300px 300px,
+                320px 320px,
+                340px 340px,
+                360px 360px,
+                380px 380px,
+                400px 400px,
+                420px 420px,
+                440px 440px,
+                460px 460px,
+                auto;
+
+            background-position: center;
+            animation: twinkle 6s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { filter: brightness(1.1); }
+            50% { filter: brightness(1.35); }
+        }
+
+        /* Container Glassmorphism */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: var(--glass-light);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+        }
+
+        h1 {
+            color: #fff;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 2.2rem;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            font-weight: 600;
+        }
+
+        /* Table Styles - Glassmorphism */
+        .table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background: var(--glass-dark);
+        }
+
+        .schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: transparent;
+        }
+
+        .schedule-table th {
+            background: var(--glass-red);
+            color: white;
+            padding: 20px 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .schedule-table td {
+            padding: 18px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            vertical-align: middle;
+            color: #fff;
+            background: var(--glass-dark);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        .schedule-table tr:nth-child(even) td {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .schedule-table tr:hover td {
+            background: rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        /* Episode Styles */
+        .episode-title {
+            font-weight: bold;
+            color: #fff;
+            text-align: center;
+            font-size: 1.3rem;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .release-date {
+            color: #a3d0ff;
+            font-size: 1.2rem;
+            font-weight: 500;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Timer Glassmorphism */
+        .timer {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            font-weight: bold;
+            background: var(--glass-yellow);
+            padding: 14px 18px;
+            border-radius: 10px;
+            display: inline-block;
+            min-width: 200px;
+            color: #b35900;
+            border: 1px solid rgba(255, 222, 89, 0.5);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .timer.expired {
+            background: rgba(240, 248, 240, 0.85);
+            color: #2d862d;
+            border-color: rgba(153, 204, 153, 0.5);
+        }
+
+        /* Logo Styles - بدون حاشیه و سایه */
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            display: inline-block;
+            max-width: 400px;
+            height: auto;
+        }
+
+        .logo img {
+            width: 100%;
+            height: auto;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            body {
+                /* بک‌گراند با ستاره‌های کوچک‌تر و تعداد بیشتر */
+                background:
+                    /* ستاره‌های بسیار ریز - تعداد بیشتر */
+                    radial-gradient(circle at 5% 10%, rgba(255,255,255,0.35) 0 0.6px, transparent 1px),
+                    radial-gradient(circle at 15% 25%, rgba(255,255,255,0.32) 0 0.5px, transparent 1px),
+                    radial-gradient(circle at 25% 40%, rgba(255,255,255,0.38) 0 0.7px, transparent 1px),
+                    radial-gradient(circle at 35% 55%, rgba(255,255,255,0.30) 0 0.4px, transparent 1px),
+                    radial-gradient(circle at 45% 70%, rgba(255,255,255,0.33) 0 0.5px, transparent 1px),
+                    radial-gradient(circle at 55% 85%, rgba(255,255,255,0.34) 0 0.5px, transparent 1px),
+                    radial-gradient(circle at 65% 15%, rgba(255,255,255,0.36) 0 0.6px, transparent 1px),
+                    radial-gradient(circle at 75% 30%, rgba(255,255,255,0.32) 0 0.4px, transparent 1px),
+                    radial-gradient(circle at 85% 45%, rgba(255,255,255,0.37) 0 0.6px, transparent 1px),
+                    radial-gradient(circle at 95% 60%, rgba(255,255,255,0.31) 0 0.5px, transparent 1px),
+                    
+                    radial-gradient(circle at 10% 20%, rgba(255,255,255,0.35) 0 0.6px, transparent 1px),
+                    radial-gradient(circle at 20% 35%, rgba(255,255,255,0.32) 0 0.5px, transparent 1px),
+                    radial-gradient(circle at 30% 50%, rgba(255,255,255,0.38) 0 0.7px, transparent 1px),
+                    radial-gradient(circle at 40% 65%, rgba(255,255,255,0.30) 0 0.4px, transparent 1px),
+                    radial-gradient(circle at 50% 80%, rgba(255,255,255,0.33) 0 0.5px, transparent 1px),
+                    radial-gradient(circle at 60% 5%, rgba(255,255,255,0.34) 0 0.5px, transparent 1px),
+                    radial-gradient(circle at 70% 20%, rgba(255,255,255,0.36) 0 0.6px, transparent 1px),
+                    radial-gradient(circle at 80% 35%, rgba(255,255,255,0.32) 0 0.4px, transparent 1px),
+                    radial-gradient(circle at 90% 50%, rgba(255,255,255,0.37) 0 0.6px, transparent 1px),
+                    radial-gradient(circle at 100% 65%, rgba(255,255,255,0.31) 0 0.5px, transparent 1px),
+
+                    /* ستاره‌های متوسط - تعداد بیشتر */
+                    radial-gradient(circle at 8% 15%, rgba(255,255,255,0.45) 0 0.9px, transparent 1.3px),
+                    radial-gradient(circle at 22% 40%, rgba(255,255,255,0.50) 0 1px, transparent 1.4px),
+                    radial-gradient(circle at 36% 65%, rgba(255,255,255,0.42) 0 0.8px, transparent 1.2px),
+                    radial-gradient(circle at 50% 10%, rgba(255,255,255,0.48) 0 0.9px, transparent 1.3px),
+                    radial-gradient(circle at 64% 35%, rgba(255,255,255,0.46) 0 0.95px, transparent 1.35px),
+                    radial-gradient(circle at 78% 60%, rgba(255,255,255,0.45) 0 0.9px, transparent 1.3px),
+                    radial-gradient(circle at 92% 85%, rgba(255,255,255,0.50) 0 1px, transparent 1.4px),
+                    radial-gradient(circle at 12% 75%, rgba(255,255,255,0.42) 0 0.8px, transparent 1.2px),
+                    radial-gradient(circle at 26% 5%, rgba(255,255,255,0.48) 0 0.9px, transparent 1.3px),
+                    radial-gradient(circle at 40% 30%, rgba(255,255,255,0.46) 0 0.95px, transparent 1.35px),
+
+                    /* ستاره‌های درشت - تعداد بیشتر */
+                    radial-gradient(circle at 18% 22%, rgba(255,255,255,0.55) 0 1.2px, transparent 1.6px),
+                    radial-gradient(circle at 38% 48%, rgba(255,255,255,0.60) 0 1.3px, transparent 1.7px),
+                    radial-gradient(circle at 58% 74%, rgba(255,255,255,0.52) 0 1.1px, transparent 1.5px),
+                    radial-gradient(circle at 78% 15%, rgba(255,255,255,0.58) 0 1.2px, transparent 1.6px),
+                    radial-gradient(circle at 98% 42%, rgba(255,255,255,0.56) 0 1.25px, transparent 1.65px),
+
+                    /* لایه پس‌زمینه آبی */
+                    linear-gradient(var(--blue), var(--blue));
+
+                background-blend-mode: screen, screen, screen, screen, screen, screen,
+                                    screen, screen, screen, screen,
+                                    screen, screen, screen, screen, screen,
+                                    screen, screen, screen, screen, screen,
+                                    screen, screen, screen, screen, screen,
+                                    screen, screen, screen, screen, screen,
+                                    normal;
+
+                background-size:
+                    120px 120px,
+                    130px 130px,
+                    140px 140px,
+                    150px 150px,
+                    160px 160px,
+                    170px 170px,
+                    180px 180px,
+                    190px 190px,
+                    200px 200px,
+                    210px 210px,
+                    120px 120px,
+                    130px 130px,
+                    140px 140px,
+                    150px 150px,
+                    160px 160px,
+                    170px 170px,
+                    180px 180px,
+                    190px 190px,
+                    200px 200px,
+                    210px 210px,
+                    220px 220px,
+                    230px 230px,
+                    240px 240px,
+                    250px 250px,
+                    260px 260px,
+                    270px 270px,
+                    280px 280px,
+                    290px 290px,
+                    300px 300px,
+                    auto;
+            }
+            
+            .container {
+                padding: 15px;
+                width: 100%;
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+            }
+            
+            h1 {
+                font-size: 1.6rem;
+                margin-bottom: 20px;
+            }
+            
+            /* جدول بهینه‌شده برای موبایل - بدون اسکرول افقی */
+            .table-container {
+                overflow-x: visible;
+                margin: 15px 0;
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+            }
+            
+            .schedule-table {
+                width: 100%;
+                min-width: auto;
+                font-size: 0.9rem;
+            }
+            
+            .schedule-table th,
+            .schedule-table td {
+                padding: 12px 8px;
+                font-size: 0.85rem;
+            }
+            
+            .schedule-table th {
+                padding: 14px 8px;
+            }
+            
+            .timer {
+                font-size: 0.85rem;
+                min-width: 150px;
+                padding: 10px 12px;
+            }
+            
+            .logo {
+                max-width: 280px;
+            }
+            
+            .episode-title {
+                font-size: 1rem;
+            }
+            
+            .release-date {
+                font-size: 0.9rem;
+            }
+            
+            .footer {
+                margin-top: 25px;
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 8px;
+                /* ستاره‌های بیشتر برای موبایل‌های بسیار کوچک */
+                background:
+                    radial-gradient(circle at 5% 10%, rgba(255,255,255,0.35) 0 0.5px, transparent 0.9px),
+                    radial-gradient(circle at 15% 25%, rgba(255,255,255,0.32) 0 0.4px, transparent 0.8px),
+                    radial-gradient(circle at 25% 40%, rgba(255,255,255,0.38) 0 0.6px, transparent 1px),
+                    radial-gradient(circle at 35% 55%, rgba(255,255,255,0.30) 0 0.3px, transparent 0.7px),
+                    radial-gradient(circle at 45% 70%, rgba(255,255,255,0.33) 0 0.4px, transparent 0.8px),
+                    radial-gradient(circle at 55% 85%, rgba(255,255,255,0.34) 0 0.4px, transparent 0.8px),
+                    radial-gradient(circle at 65% 15%, rgba(255,255,255,0.36) 0 0.5px, transparent 0.9px),
+                    radial-gradient(circle at 75% 30%, rgba(255,255,255,0.32) 0 0.3px, transparent 0.7px),
+                    radial-gradient(circle at 85% 45%, rgba(255,255,255,0.37) 0 0.5px, transparent 0.9px),
+                    radial-gradient(circle at 95% 60%, rgba(255,255,255,0.31) 0 0.4px, transparent 0.8px),
+                    
+                    radial-gradient(circle at 10% 20%, rgba(255,255,255,0.35) 0 0.5px, transparent 0.9px),
+                    radial-gradient(circle at 20% 35%, rgba(255,255,255,0.32) 0 0.4px, transparent 0.8px),
+                    radial-gradient(circle at 30% 50%, rgba(255,255,255,0.38) 0 0.6px, transparent 1px),
+                    radial-gradient(circle at 40% 65%, rgba(255,255,255,0.30) 0 0.3px, transparent 0.7px),
+                    radial-gradient(circle at 50% 80%, rgba(255,255,255,0.33) 0 0.4px, transparent 0.8px),
+                    radial-gradient(circle at 60% 5%, rgba(255,255,255,0.34) 0 0.4px, transparent 0.8px),
+                    radial-gradient(circle at 70% 20%, rgba(255,255,255,0.36) 0 0.5px, transparent 0.9px),
+                    radial-gradient(circle at 80% 35%, rgba(255,255,255,0.32) 0 0.3px, transparent 0.7px),
+                    radial-gradient(circle at 90% 50%, rgba(255,255,255,0.37) 0 0.5px, transparent 0.9px),
+                    radial-gradient(circle at 100% 65%, rgba(255,255,255,0.31) 0 0.4px, transparent 0.8px),
+
+                    radial-gradient(circle at 8% 15%, rgba(255,255,255,0.45) 0 0.8px, transparent 1.2px),
+                    radial-gradient(circle at 22% 40%, rgba(255,255,255,0.50) 0 0.9px, transparent 1.3px),
+                    radial-gradient(circle at 36% 65%, rgba(255,255,255,0.42) 0 0.7px, transparent 1.1px),
+                    radial-gradient(circle at 50% 10%, rgba(255,255,255,0.48) 0 0.8px, transparent 1.2px),
+                    radial-gradient(circle at 64% 35%, rgba(255,255,255,0.46) 0 0.85px, transparent 1.25px),
+                    radial-gradient(circle at 78% 60%, rgba(255,255,255,0.45) 0 0.8px, transparent 1.2px),
+                    radial-gradient(circle at 92% 85%, rgba(255,255,255,0.50) 0 0.9px, transparent 1.3px),
+                    radial-gradient(circle at 12% 75%, rgba(255,255,255,0.42) 0 0.7px, transparent 1.1px),
+                    radial-gradient(circle at 26% 5%, rgba(255,255,255,0.48) 0 0.8px, transparent 1.2px),
+                    radial-gradient(circle at 40% 30%, rgba(255,255,255,0.46) 0 0.85px, transparent 1.25px),
+
+                    radial-gradient(circle at 18% 22%, rgba(255,255,255,0.55) 0 1px, transparent 1.4px),
+                    radial-gradient(circle at 38% 48%, rgba(255,255,255,0.60) 0 1.1px, transparent 1.5px),
+                    radial-gradient(circle at 58% 74%, rgba(255,255,255,0.52) 0 0.9px, transparent 1.3px),
+                    radial-gradient(circle at 78% 15%, rgba(255,255,255,0.58) 0 1px, transparent 1.4px),
+                    radial-gradient(circle at 98% 42%, rgba(255,255,255,0.56) 0 1.05px, transparent 1.45px),
+
+                    linear-gradient(var(--blue), var(--blue));
+
+                background-blend-mode: screen, screen, screen, screen, screen, screen,
+                                    screen, screen, screen, screen,
+                                    screen, screen, screen, screen, screen,
+                                    screen, screen, screen, screen, screen,
+                                    screen, screen, screen, screen, screen,
+                                    screen, screen, screen, screen, screen,
+                                    normal;
+
+                background-size:
+                    120px 120px,
+                    130px 130px,
+                    140px 140px,
+                    150px 150px,
+                    160px 160px,
+                    170px 170px,
+                    180px 180px,
+                    190px 190px,
+                    200px 200px,
+                    210px 210px,
+                    120px 120px,
+                    130px 130px,
+                    140px 140px,
+                    150px 150px,
+                    160px 160px,
+                    170px 170px,
+                    180px 180px,
+                    190px 190px,
+                    200px 200px,
+                    210px 210px,
+                    220px 220px,
+                    230px 230px,
+                    240px 240px,
+                    250px 250px,
+                    260px 260px,
+                    270px 270px,
+                    280px 280px,
+                    290px 290px,
+                    300px 300px,
+                    auto;
+            }
+            
+            .container {
+                padding: 12px;
+            }
+            
+            .schedule-table th,
+            .schedule-table td {
+                padding: 10px 6px;
+                font-size: 0.8rem;
+            }
+            
+            .schedule-table th {
+                padding: 12px 6px;
+            }
+            
+            .timer {
+                font-size: 0.75rem;
+                min-width: 130px;
+                padding: 8px 10px;
+            }
+            
+            .logo {
+                max-width: 220px;
+            }
+            
+            .episode-title {
+                font-size: 0.9rem;
+            }
+            
+            .release-date {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- لوگو بدون حاشیه و سایه -->
+    <div class="logo-container">
+        <div class="logo">
+            <img src="https://abrehamrahi.ir/o/public/C0HVUKnG/" alt="My Hero Academia Logo">
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>جدول پخش فصل 8</h1>
+        
+        <div class="table-container">
+            <table class="schedule-table">
+                <thead>
+                    <tr>
+                        <th>قسمت</th>
+                        <th>تاریخ پخش</th>
+                        <th>تایمر</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- ردیف ها توسط جاوااسکریپت پر می شوند -->
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="footer">
+            <p><i class="far fa-clock"></i> همه زمان‌ها به وقت محلی شما نمایش داده می‌شوند</p>
+        </div>
+    </div>
+
+    <script>
+        // Episode data - فقط تاریخ شمسی بدون کلمه "ماه"
+        const episodes = [
+            { number: 1, persianDate: "شنبه ۱۲ مهر" },
+            { number: 2, persianDate: "شنبه ۱۹ مهر" },
+            { number: 3, persianDate: "شنبه ۲۸ مهر" },
+            { number: 4, persianDate: "شنبه ۵ آبان" },
+            { number: 5, persianDate: "شنبه ۱۲ آبان" },
+            { number: 6, persianDate: "شنبه ۱۹ آبان" },
+            { number: 7, persianDate: "شنبه ۲۸ آبان" },
+            { number: 8, persianDate: "شنبه ۵ آذر" },
+            { number: 9, persianDate: "شنبه ۱۲ آذر" },
+            { number: 10, persianDate: "شنبه ۱۹ آذر" },
+            { number: 11, persianDate: "شنبه ۲۸ آذر" }
+        ];
+
+        // تاریخ‌های میلادی برای محاسبه تایمر
+        const gregorianDates = [
+            "2025-10-04",
+            "2025-10-11", 
+            "2025-10-18",
+            "2025-10-25",
+            "2025-11-01",
+            "2025-11-08",
+            "2025-11-15",
+            "2025-11-22",
+            "2025-11-29",
+            "2025-12-06",
+            "2025-12-13"
+        ];
+
+        // Function to create Iran timezone date (UTC+3:30 - IRST)
+        function createIranTime(dateString) {
+            const date = new Date(dateString + 'T12:00:00'); // 12:00 PM
+            return date;
+        }
+
+        // Function to update countdown timers
+        function updateCountdowns() {
+            const now = new Date();
+            const tableBody = document.querySelector('.schedule-table tbody');
+            
+            // Clear existing rows
+            tableBody.innerHTML = '';
+            
+            // Create rows for each episode
+            episodes.forEach((episode, index) => {
+                const row = document.createElement('tr');
+                
+                // Episode number cell - بدون دایره آبی
+                const episodeCell = document.createElement('td');
+                episodeCell.innerHTML = `
+                    <div class="episode-title">
+                        قسمت ${episode.number}
+                    </div>
+                `;
+                
+                // Date cell - فقط تاریخ شمسی
+                const dateCell = document.createElement('td');
+                dateCell.innerHTML = `
+                    <div class="release-date">${episode.persianDate}</div>
+                `;
+                
+                // Timer cell
+                const timerCell = document.createElement('td');
+                const timerDiv = document.createElement('div');
+                timerDiv.className = 'timer';
+                timerCell.appendChild(timerDiv);
+                
+                // Append cells to row
+                row.appendChild(episodeCell);
+                row.appendChild(dateCell);
+                row.appendChild(timerCell);
+                
+                // Append row to table
+                tableBody.appendChild(row);
+                
+                // Update timer immediately - ساعت 12 ظهر به وقت ایران
+                updateTimer(timerDiv, gregorianDates[index], now);
+            });
+        }
+
+        // Function to update individual timer - فقط روز و ساعت (ساعت 12 ظهر به وقت ایران)
+        function updateTimer(timerElement, targetDateString, now) {
+            const targetDate = createIranTime(targetDateString);
+            const timeDiff = targetDate - now;
+            
+            if (timeDiff <= 0) {
+                timerElement.textContent = "پخش شده!";
+                timerElement.classList.add('expired');
+            } else {
+                const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                
+                timerElement.textContent = `${days} روز, ${hours} ساعت`;
+                timerElement.classList.remove('expired');
+            }
+        }
+
+        // Initial update
+        updateCountdowns();
+        
+        // Update timers every second
+        setInterval(() => {
+            const now = new Date();
+            const timerElements = document.querySelectorAll('.timer');
+            
+            timerElements.forEach((timerElement, index) => {
+                if (index < episodes.length) {
+                    updateTimer(timerElement, gregorianDates[index], now);
+                }
+            });
+        }, 1000);
+    </script>
+</body>
+</html>
