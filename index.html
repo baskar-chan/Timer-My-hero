@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Hero Academia - برنامه زمانی پخش</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --blue: #0b1a3a; /* آبی پررنگ */
@@ -16,6 +17,93 @@
             --glass-yellow: rgba(255, 249, 230, 0.85);
         }
 
+        /* استایل‌های مربوط به صفحه لودینگ */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.5s ease;
+            /* استفاده از بک‌گراند اصلی سایت */
+            background: inherit;
+        }
+        
+        #loading-screen.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .loading-content {
+            text-align: center;
+            color: #FFE500;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+        
+        .loading-logo {
+            max-width: 300px;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out 0.2s forwards;
+        }
+        
+        .loading-logo img {
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 0 10px rgba(255, 229, 0, 0.5));
+        }
+        
+        .loading-text {
+            font-size: 3.5rem;
+            font-weight: 900;
+            text-shadow: 0 0 10px rgba(255, 229, 0, 0.5);
+            overflow: hidden;
+            white-space: nowrap;
+            margin: 0 auto;
+            border-right: 3px solid #FFE500;
+            width: 0;
+            animation: 
+                typing 2s steps(11, end) forwards,
+                blink-cursor 0.75s step-end infinite;
+        }
+        
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        
+        @keyframes blink-cursor {
+            from, to { border-color: transparent }
+            50% { border-color: #FFE500; }
+        }
+        
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        
+        /* مخفی کردن محتوای اصلی در هنگام لودینگ */
+        .main-content {
+            opacity: 0;
+            transform: translateY(100px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        
+        .main-content.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         /* General Styles */
         * {
             box-sizing: border-box;
@@ -24,7 +112,7 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: #fff;
             line-height: 1.6;
             padding: 15px;
@@ -36,9 +124,9 @@
                 /* اکلیل‌های ریز */
                 radial-gradient(circle at 12% 18%, rgba(255,255,255,0.35) 0 1.6px, transparent 2px),
                 radial-gradient(circle at 32% 66%, rgba(255,255,255,0.32) 0 1.4px, transparent 2px),
-                radial-gradient(circle at 78% 24%, rgba(255,255,255,0.38) 0 1.8px, transparent 2.2px),
+                radial-gradient(circle at 78% 24%, rgba(255,255,255,0.38) 0 1.8px, transparent 2px),
                 radial-gradient(circle at 55% 12%, rgba(255,255,255,0.30) 0 1.3px, transparent 2px),
-                radial-gradient(circle at 8% 82%, rgba(255,255,255,0.33) 0 1.5px, transparent 2.1px),
+                radial-gradient(circle at 8% 82%, rgba(255,255,255,0.33) 0 1.5px, transparent 2px),
                 radial-gradient(circle at 90% 70%, rgba(255,255,255,0.34) 0 1.4px, transparent 2px),
                 radial-gradient(circle at 25% 40%, rgba(255,255,255,0.36) 0 1.5px, transparent 2px),
                 radial-gradient(circle at 65% 15%, rgba(255,255,255,0.32) 0 1.3px, transparent 2px),
@@ -91,50 +179,108 @@
         .container {
             max-width: 1000px;
             margin: 0 auto;
-            padding: 25px;
+            padding: 15px 17px; /* کاهش 3px از هر طرف (2.5mm) */
             border-radius: 20px;
-            margin-top: 20px;
+            margin-top: 10px;
             background: transparent;
         }
 
         h1 {
             color: #fff;
             text-align: center;
-            margin-bottom: 25px;
-            font-size: 2.2rem;
-            padding-bottom: 15px;
+            margin-bottom: 20px;
+            font-size: 2rem;
+            padding-bottom: 10px;
             text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-            font-weight: 600;
+            font-weight: 700;
         }
 
-        /* Table Styles - Glassmorphism */
+        /* Table Styles - بدون کادر شفاف و بدون خطوط */
         .table-container {
             overflow-x: auto;
-            margin: 20px 0;
-            border-radius: 16px;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            background: var(--glass-dark);
+            margin: 10px 0 5px 0;
+            border-radius: 0;
+            border: none;
+            box-shadow: none;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            background: transparent;
         }
 
         .schedule-table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0 18px; /* افزایش بیشتر فاصله بین ردیف‌ها */
+            background: transparent;
+            table-layout: fixed;
+            margin-bottom: 0;
+        }
+
+        .schedule-table td {
+            padding: 14px 5px; /* کاهش 3px از padding افقی (2.5mm) */
+            text-align: center;
+            vertical-align: middle;
+            color: #fff;
+            background: transparent;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            /* حذف border-bottom */
+            border-bottom: none;
+            position: relative; /* برای خط عمودی */
+        }
+
+        .schedule-table tr:nth-child(even) td {
             background: transparent;
         }
 
-        .schedule-table th {
-            background: transparent;
-            color: #FFE500; /* تغییر به رنگ زرد درخشان */
-            padding: 22px 15px; /* افزایش padding برای متن بزرگتر */
-            font-size: 1.6rem; /* بزرگتر کردن سایز فونت */
-            font-weight: 900; /* کلفت‌تر */
+        .schedule-table tr:hover td {
+            background: rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        /* ستون‌های جدول */
+        .schedule-table td:nth-child(1) { width: 28%; } /* ستون قسمت */
+        .schedule-table td:nth-child(2) { width: 36%; } /* ستون تاریخ */
+        .schedule-table td:nth-child(3) { width: 36%; } /* ستون تایمر */
+
+        /* خط عمودی بین تاریخ و تایمر - کوتاه‌تر و نازک‌تر */
+        .schedule-table td:nth-child(2)::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 30%; /* کوتاه‌تر - 30% ارتفاع سلول */
+            width: 0.5px; /* نازک‌تر */
+            background-color: #FFE500; /* رنگ زرد */
+        }
+
+        /* قسمت‌ها - استایل قبلی تاریخ‌ها (مستطیل قرمز) - نازک‌تر */
+        .episode-title {
+            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
+            font-size: 1.1rem;
+            font-weight: 900;
+            background: #FF0000;
+            padding: 6px 10px; /* کاهش بیشتر برای نازک‌تر شدن (2mm ≈ 3px) */
+            border-radius: 0;
+            display: inline-block;
+            width: auto;
+            min-width: auto;
+            color: #ffffff;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1); /* سایه نازک‌تر */
+            backdrop-filter: blur(6px); /* بلور کمتر */
+            -webkit-backdrop-filter: blur(6px);
+            line-height: 1.2;
+            text-shadow: none;
+            border: 0.5px solid rgba(255, 255, 255, 0.2); /* حاشیه نازک */
+        }
+
+        /* تاریخ‌ها - استایل قبلی قسمت‌ها (متن زرد با حاشیه) */
+        .release-date {
+            font-weight: 900;
+            color: #FFE500;
             text-align: center;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 1.1rem;
             text-shadow: 
                 3px 0 0 #000, 
                 -3px 0 0 #000, 
@@ -143,95 +289,59 @@
                 2px 2px 0 #000, 
                 -2px -2px 0 #000, 
                 2px -2px 0 #000, 
-                -2px 2px 0 #000; /* حاشیه سیاه کلفت‌تر */
+                -2px 2px 0 #000,
+                1.5px 0 0 #000, 
+                -1.5px 0 0 #000, 
+                0 1.5px 0 #000, 
+                0 -1.5px 0 #000, 
+                1px 1px 0 #000, 
+                -1px -1px 0 #000, 
+                1px -1px 0 #000, 
+                -1px 1px 0 #000;
+            background: transparent;
+            padding: 0;
+            border-radius: 0;
+            box-shadow: none;
+            backdrop-filter: none;
+            line-height: 1.1;
         }
 
-        .schedule-table td {
-            padding: 18px 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-            vertical-align: middle;
-            color: #fff;
-            background: var(--glass-dark);
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-        }
-
-        .schedule-table tr:nth-child(even) td {
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        .schedule-table tr:hover td {
-            background: rgba(255, 255, 255, 0.15);
-            transition: all 0.3s ease;
-        }
-
-        /* Episode Styles */
-        .episode-title {
-            font-weight: 900; /* کلفت‌تر */
-            color: #FFE500; /* تغییر به رنگ زرد درخشان */
-            text-align: center;
-            font-size: 1.5rem; /* بزرگتر کردن سایز فونت */
-            text-shadow: 
-                2px 0 0 #000, 
-                -2px 0 0 #000, 
-                0 2px 0 #000, 
-                0 -2px 0 #000, 
-                1.5px 1.5px 0 #000, 
-                -1.5px -1.5px 0 #000, 
-                1.5px -1.5px 0 #000, 
-                -1.5px 1.5px 0 #000; /* حاشیه سیاه */
-        }
-
-        .release-date {
-            color: #a3d0ff;
-            font-size: 1.2rem;
+        /* تایمر - استایل قبلی تاریخ‌ها با رنگ زرد */
+        .timer {
+            color: #FFE500;
+            font-size: 0.9rem;
             font-weight: 500;
             text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Timer Glassmorphism */
-        .timer {
-            font-family: 'Courier New', monospace;
-            font-size: 1.3rem; /* بزرگتر کردن سایز فونت */
-            font-weight: 900; /* کلفت‌تر */
-            background: rgba(255, 255, 255, 0.15); /* پس‌زمینه شیشه‌ای */
-            padding: 14px 18px;
-            border-radius: 10px;
             display: inline-block;
-            min-width: 200px;
-            color: #ffffff; /* رنگ سفید */
-            border: 1px solid rgba(255, 0, 0, 0.5); /* حاشیه قرمز */
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            text-shadow: 
-                2px 0 0 #ff0000, 
-                -2px 0 0 #ff0000, 
-                0 2px 0 #ff0000, 
-                0 -2px 0 #ff0000, 
-                1.5px 1.5px 0 #ff0000, 
-                -1.5px -1.5px 0 #ff0000, 
-                1.5px -1.5px 0 #ff0000, 
-                -1.5px 1.5px 0 #ff0000; /* حاشیه قرمز */
+            min-width: 110px;
+            padding: 2px 4px;
+            box-sizing: border-box;
+            line-height: 1.1;
         }
 
         .timer.expired {
-            background: rgba(240, 248, 240, 0.85);
-            color: #2d862d;
-            border-color: rgba(153, 204, 153, 0.5);
-            text-shadow: none; /* حذف حاشیه برای حالت expired */
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 2px 4px;
+            display: inline-block;
+            font-weight: 700;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            min-width: 110px;
+            box-sizing: border-box;
+            text-align: center;
+            line-height: 1.1;
         }
 
         /* Logo Styles - بدون حاشیه و سایه */
         .logo-container {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         .logo {
             display: inline-block;
-            max-width: 400px;
+            max-width: 350px;
             height: auto;
         }
 
@@ -240,14 +350,29 @@
             height: auto;
         }
 
-        /* Footer */
-        .footer {
-            margin-top: 40px;
-            text-align: center;
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 0.9rem;
-            padding-top: 20px;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        /* Notes attached to table - عرض برابر با جدول با کاهش 6mm */
+        .table-notes {
+            margin-top: 15px;
+            padding: 12px 14px;
+            background-color: rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            font-size: 0.8rem;
+            line-height: 1.6;
+            text-align: right;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: calc(100% - 12px); /* کاهش 6mm (6px از هر طرف) */
+            margin-left: auto;
+            margin-right: auto;
+            box-sizing: border-box; /* برای محاسبه صحیح عرض با در نظر گرفتن padding */
+        }
+
+        .table-notes p {
+            margin: 4px 0;
+        }
+
+        .recommendation {
+            color: #FFE500;
+            font-weight: 700;
         }
 
         /* Mobile Responsive */
@@ -342,58 +467,100 @@
             }
             
             .container {
-                padding: 15px;
+                padding: 10px 14px; /* کاهش 3px از هر طرف در موبایل */
                 width: 100%;
                 background: transparent;
             }
             
             h1 {
-                font-size: 1.6rem;
-                margin-bottom: 20px;
+                font-size: 1.5rem;
+                margin-bottom: 15px;
             }
             
-            /* جدول بهینه‌شده برای موبایل - بدون اسکرول افقی */
+            /* جدول بهینه‌شده برای موبایل - بدون کادر شفاف */
             .table-container {
                 overflow-x: visible;
-                margin: 15px 0;
-                backdrop-filter: blur(8px);
-                -webkit-backdrop-filter: blur(8px);
+                margin: 8px 0 3px 0;
+                backdrop-filter: none;
+                -webkit-backdrop-filter: none;
             }
             
             .schedule-table {
                 width: 100%;
                 min-width: auto;
-                font-size: 0.9rem;
-            }
-            
-            .schedule-table th,
-            .schedule-table td {
-                padding: 12px 8px;
                 font-size: 0.85rem;
+                table-layout: auto;
+                border-spacing: 0 14px; /* افزایش بیشتر فاصله بین ردیف‌ها در موبایل */
             }
             
-            .schedule-table th {
-                padding: 16px 8px; /* افزایش padding برای متن بزرگتر */
+            .schedule-table td {
+                padding: 12px 3px; /* کاهش 3px از padding افقی در موبایل */
+                font-size: 0.8rem;
                 background: transparent;
-                color: #FFE500; /* تغییر به رنگ زرد درخشان */
-                font-weight: 900; /* کلفت‌تر */
-                font-size: 1.3rem; /* بزرگتر کردن سایز فونت */
-                text-shadow: 
-                    2px 0 0 #000, 
-                    -2px 0 0 #000, 
-                    0 2px 0 #000, 
-                    0 -2px 0 #000, 
-                    1.5px 1.5px 0 #000, 
-                    -1.5px -1.5px 0 #000, 
-                    1.5px -1.5px 0 #000, 
-                    -1.5px 1.5px 0 #000; /* حاشیه سیاه کلفت‌تر */
+                backdrop-filter: none;
+                -webkit-backdrop-filter: none;
+                position: relative; /* برای خط عمودی */
             }
             
+            .schedule-table tr:nth-child(even) td {
+                background: transparent;
+            }
+            
+            .schedule-table tr:hover td {
+                background: rgba(255, 255, 255, 0.03);
+            }
+            
+            /* بازنشانی عرض ستون‌ها در موبایل */
+            .schedule-table td:nth-child(1),
+            .schedule-table td:nth-child(2),
+            .schedule-table td:nth-child(3) {
+                width: auto;
+            }
+            
+            /* خط عمودی در موبایل - کوتاه‌تر و نازک‌تر */
+            .schedule-table td:nth-child(2)::after {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                height: 25%; /* کوتاه‌تر در موبایل */
+                width: 0.5px; /* نازک‌تر */
+                background-color: #FFE500; /* رنگ زرد */
+            }
+            
+            /* قسمت‌ها - استایل قبلی تاریخ‌ها برای موبایل - نازک‌تر */
             .episode-title {
-                font-weight: 900; /* کلفت‌تر */
-                color: #FFE500; /* تغییر به رنگ زرد درخشان */
-                font-size: 1.2rem; /* بزرگتر کردن سایز فونت */
+                font-family: 'Vazirmatn', 'Segoe UI', Tahoma, sans-serif;
+                font-size: 1rem;
+                font-weight: 900;
+                padding: 4px 8px; /* کاهش بیشتر برای نازک‌تر شدن در موبایل */
+                border-radius: 0;
+                width: auto;
+                min-width: auto;
+                background: #FF0000;
+                line-height: 1.2;
+                text-shadow: none;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* سایه نازک‌تر */
+                backdrop-filter: blur(4px); /* بلور کمتر */
+                -webkit-backdrop-filter: blur(4px);
+                border: 0.5px solid rgba(255, 255, 255, 0.2); /* حاشیه نازک */
+            }
+            
+            /* تاریخ‌ها - استایل قبلی قسمت‌ها برای موبایل */
+            .release-date {
+                font-weight: 900;
+                color: #FFE500;
+                font-size: 1rem;
                 text-shadow: 
+                    2.5px 0 0 #000, 
+                    -2.5px 0 0 #000, 
+                    0 2.5px 0 #000, 
+                    0 -2.5px 0 #000, 
+                    2px 2px 0 #000, 
+                    -2px -2px 0 #000, 
+                    2px -2px 0 #000, 
+                    -2px 2px 0 #000,
                     1.5px 0 0 #000, 
                     -1.5px 0 0 #000, 
                     0 1.5px 0 #000, 
@@ -401,227 +568,198 @@
                     1px 1px 0 #000, 
                     -1px -1px 0 #000, 
                     1px -1px 0 #000, 
-                    -1px 1px 0 #000; /* حاشیه سیاه */
+                    -1px 1px 0 #000;
+                background: transparent;
+                padding: 0;
+                border-radius: 0;
+                box-shadow: none;
+                backdrop-filter: none;
+                line-height: 1.1;
             }
             
+            /* تایمر - استایل قبلی تاریخ‌ها برای موبایل با رنگ زرد */
             .timer {
-                font-size: 1.1rem; /* بزرگتر کردن سایز فونت */
-                font-weight: 900; /* کلفت‌تر */
-                min-width: 150px;
-                padding: 10px 12px;
-                text-shadow: 
-                    1.5px 0 0 #ff0000, 
-                    -1.5px 0 0 #ff0000, 
-                    0 1.5px 0 #ff0000, 
-                    0 -1.5px 0 #ff0000, 
-                    1px 1px 0 #ff0000, 
-                    -1px -1px 0 #ff0000, 
-                    1px -1px 0 #ff0000, 
-                    -1px 1px 0 #ff0000; /* حاشیه قرمز */
+                color: #FFE500;
+                font-size: 0.8rem;
+                min-width: 90px;
+                padding: 1px 3px;
+                line-height: 1.1;
+            }
+
+            .timer.expired {
+                color: #ffffff;
+                background-color: rgba(255, 255, 255, 0.1);
+                padding: 1px 3px;
+                font-size: 0.75rem;
+                min-width: 90px;
+                line-height: 1.1;
             }
             
             .logo {
                 max-width: 280px;
             }
             
-            .release-date {
-                font-size: 0.9rem;
+            .table-notes {
+                padding: 10px 12px;
+                font-size: 0.75rem;
+                margin-top: 8px;
+                width: calc(100% - 12px); /* کاهش 6mm (6px از هر طرف) در موبایل */
+                margin-left: auto;
+                margin-right: auto;
+                box-sizing: border-box;
             }
             
-            .footer {
-                margin-top: 25px;
-                font-size: 0.8rem;
+            /* استایل‌های لودینگ برای موبایل */
+            .loading-logo {
+                max-width: 200px;
+                margin-bottom: 30px;
+            }
+            
+            .loading-text {
+                font-size: 2.5rem;
             }
         }
 
         @media (max-width: 480px) {
             body {
-                padding: 8px;
-                /* ستاره‌های بیشتر برای موبایل‌های بسیار کوچک */
-                background:
-                    radial-gradient(circle at 5% 10%, rgba(255,255,255,0.35) 0 0.5px, transparent 0.9px),
-                    radial-gradient(circle at 15% 25%, rgba(255,255,255,0.32) 0 0.4px, transparent 0.8px),
-                    radial-gradient(circle at 25% 40%, rgba(255,255,255,0.38) 0 0.6px, transparent 1px),
-                    radial-gradient(circle at 35% 55%, rgba(255,255,255,0.30) 0 0.3px, transparent 0.7px),
-                    radial-gradient(circle at 45% 70%, rgba(255,255,255,0.33) 0 0.4px, transparent 0.8px),
-                    radial-gradient(circle at 55% 85%, rgba(255,255,255,0.34) 0 0.4px, transparent 0.8px),
-                    radial-gradient(circle at 65% 15%, rgba(255,255,255,0.36) 0 0.5px, transparent 0.9px),
-                    radial-gradient(circle at 75% 30%, rgba(255,255,255,0.32) 0 0.3px, transparent 0.7px),
-                    radial-gradient(circle at 85% 45%, rgba(255,255,255,0.37) 0 0.5px, transparent 0.9px),
-                    radial-gradient(circle at 95% 60%, rgba(255,255,255,0.31) 0 0.4px, transparent 0.8px),
-                    
-                    radial-gradient(circle at 10% 20%, rgba(255,255,255,0.35) 0 0.5px, transparent 0.9px),
-                    radial-gradient(circle at 20% 35%, rgba(255,255,255,0.32) 0 0.4px, transparent 0.8px),
-                    radial-gradient(circle at 30% 50%, rgba(255,255,255,0.38) 0 0.6px, transparent 1px),
-                    radial-gradient(circle at 40% 65%, rgba(255,255,255,0.30) 0 0.3px, transparent 0.7px),
-                    radial-gradient(circle at 50% 80%, rgba(255,255,255,0.33) 0 0.4px, transparent 0.8px),
-                    radial-gradient(circle at 60% 5%, rgba(255,255,255,0.34) 0 0.4px, transparent 0.8px),
-                    radial-gradient(circle at 70% 20%, rgba(255,255,255,0.36) 0 0.5px, transparent 0.9px),
-                    radial-gradient(circle at 80% 35%, rgba(255,255,255,0.32) 0 0.3px, transparent 0.7px),
-                    radial-gradient(circle at 90% 50%, rgba(255,255,255,0.37) 0 0.5px, transparent 0.9px),
-                    radial-gradient(circle at 100% 65%, rgba(255,255,255,0.31) 0 0.4px, transparent 0.8px),
-
-                    radial-gradient(circle at 8% 15%, rgba(255,255,255,0.45) 0 0.8px, transparent 1.2px),
-                    radial-gradient(circle at 22% 40%, rgba(255,255,255,0.50) 0 0.9px, transparent 1.3px),
-                    radial-gradient(circle at 36% 65%, rgba(255,255,255,0.42) 0 0.7px, transparent 1.1px),
-                    radial-gradient(circle at 50% 10%, rgba(255,255,255,0.48) 0 0.8px, transparent 1.2px),
-                    radial-gradient(circle at 64% 35%, rgba(255,255,255,0.46) 0 0.85px, transparent 1.25px),
-                    radial-gradient(circle at 78% 60%, rgba(255,255,255,0.45) 0 0.8px, transparent 1.2px),
-                    radial-gradient(circle at 92% 85%, rgba(255,255,255,0.50) 0 0.9px, transparent 1.3px),
-                    radial-gradient(circle at 12% 75%, rgba(255,255,255,0.42) 0 0.7px, transparent 1.1px),
-                    radial-gradient(circle at 26% 5%, rgba(255,255,255,0.48) 0 0.8px, transparent 1.2px),
-                    radial-gradient(circle at 40% 30%, rgba(255,255,255,0.46) 0 0.85px, transparent 1.25px),
-
-                    radial-gradient(circle at 18% 22%, rgba(255,255,255,0.55) 0 1px, transparent 1.4px),
-                    radial-gradient(circle at 38% 48%, rgba(255,255,255,0.60) 0 1.1px, transparent 1.5px),
-                    radial-gradient(circle at 58% 74%, rgba(255,255,255,0.52) 0 0.9px, transparent 1.3px),
-                    radial-gradient(circle at 78% 15%, rgba(255,255,255,0.58) 0 1px, transparent 1.4px),
-                    radial-gradient(circle at 98% 42%, rgba(255,255,255,0.56) 0 1.05px, transparent 1.45px),
-
-                    linear-gradient(var(--blue), var(--blue));
-
-                background-blend-mode: screen, screen, screen, screen, screen, screen,
-                                    screen, screen, screen, screen,
-                                    screen, screen, screen, screen, screen,
-                                    screen, screen, screen, screen, screen,
-                                    screen, screen, screen, screen, screen,
-                                    screen, screen, screen, screen, screen,
-                                    normal;
-
-                background-size:
-                    120px 120px,
-                    130px 130px,
-                    140px 140px,
-                    150px 150px,
-                    160px 160px,
-                    170px 170px,
-                    180px 180px,
-                    190px 190px,
-                    200px 200px,
-                    210px 210px,
-                    120px 120px,
-                    130px 130px,
-                    140px 140px,
-                    150px 150px,
-                    160px 160px,
-                    170px 170px,
-                    180px 180px,
-                    190px 190px,
-                    200px 200px,
-                    210px 210px,
-                    220px 220px,
-                    230px 230px,
-                    240px 240px,
-                    250px 250px,
-                    260px 260px,
-                    270px 270px,
-                    280px 280px,
-                    290px 290px,
-                    300px 300px,
-                    auto;
+                padding: 5px;
             }
             
             .container {
-                padding: 12px;
-                background: transparent;
+                padding: 8px 11px; /* کاهش 3px از هر طرف در موبایل کوچک */
             }
             
-            .schedule-table th,
+            .schedule-table {
+                border-spacing: 0 10px; /* افزایش بیشتر فاصله بین ردیف‌ها در موبایل کوچک */
+            }
+            
             .schedule-table td {
-                padding: 10px 6px;
-                font-size: 0.8rem;
+                padding: 10px 2px; /* کاهش 3px از padding افقی در موبایل کوچک */
+                font-size: 0.75rem;
+                position: relative; /* برای خط عمودی */
             }
             
-            .schedule-table th {
-                padding: 14px 6px; /* افزایش padding برای متن بزرگتر */
-                background: transparent;
-                color: #FFE500; /* تغییر به رنگ زرد درخشان */
-                font-weight: 900; /* کلفت‌تر */
-                font-size: 1.2rem; /* بزرگتر کردن سایز فونت */
-                text-shadow: 
-                    2px 0 0 #000, 
-                    -2px 0 0 #000, 
-                    0 2px 0 #000, 
-                    0 -2px 0 #000, 
-                    1.5px 1.5px 0 #000, 
-                    -1.5px -1.5px 0 #000, 
-                    1.5px -1.5px 0 #000, 
-                    -1.5px 1.5px 0 #000; /* حاشیه سیاه کلفت‌تر */
+            /* خط عمودی در موبایل کوچک - کوتاه‌تر و نازک‌تر */
+            .schedule-table td:nth-child(2)::after {
+                content: '';
+                position: absolute;
+                left: 0;
+                top: 50%;
+                transform: translateY(-50%);
+                height: 20%; /* کوتاه‌تر در موبایل کوچک */
+                width: 0.5px; /* نازک‌تر */
+                background-color: #FFE500; /* رنگ زرد */
             }
             
+            /* قسمت‌ها - استایل قبلی تاریخ‌ها برای موبایل کوچک - نازک‌تر */
             .episode-title {
-                font-weight: 900; /* کلفت‌تر */
-                color: #FFE500; /* تغییر به رنگ زرد درخشان */
-                font-size: 1.1rem; /* بزرگتر کردن سایز فونت */
-                text-shadow: 
-                    1.5px 0 0 #000, 
-                    -1.5px 0 0 #000, 
-                    0 1.5px 0 #000, 
-                    0 -1.5px 0 #000, 
-                    1px 1px 0 #000, 
-                    -1px -1px 0 #000, 
-                    1px -1px 0 #000, 
-                    -1px 1px 0 #000; /* حاشیه سیاه */
+                font-size: 0.95rem;
+                padding: 3px 6px; /* کاهش بیشتر برای نازک‌تر شدن در موبایل کوچک */
+                box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* سایه نازک‌تر */
+                backdrop-filter: blur(3px); /* بلور کمتر */
+                -webkit-backdrop-filter: blur(3px);
+                border: 0.5px solid rgba(255, 255, 255, 0.2); /* حاشیه نازک */
+            }
+            
+            .release-date {
+                font-size: 0.9rem;
+                line-height: 1.1;
             }
             
             .timer {
-                font-size: 1rem; /* بزرگتر کردن سایز فونت */
-                font-weight: 900; /* کلفت‌تر */
-                min-width: 130px;
-                padding: 8px 10px;
-                text-shadow: 
-                    1.5px 0 0 #ff0000, 
-                    -1.5px 0 0 #ff0000, 
-                    0 1.5px 0 #ff0000, 
-                    0 -1.5px 0 #ff0000, 
-                    1px 1px 0 #ff0000, 
-                    -1px -1px 0 #ff0000, 
-                    1px -1px 0 #ff0000, 
-                    -1px 1px 0 #ff0000; /* حاشیه قرمز */
+                font-size: 0.75rem;
+                min-width: 80px;
+                padding: 1px 2px;
+                line-height: 1.1;
+            }
+
+            .timer.expired {
+                padding: 1px 2px;
+                font-size: 0.7rem;
+                min-width: 80px;
+                line-height: 1.1;
             }
             
             .logo {
                 max-width: 220px;
             }
             
-            .release-date {
-                font-size: 0.85rem;
+            .table-notes {
+                padding: 8px 10px;
+                font-size: 0.7rem;
+                width: calc(100% - 12px); /* کاهش 6mm (6px از هر طرف) در موبایل کوچک */
+                margin-left: auto;
+                margin-right: auto;
+                box-sizing: border-box;
+            }
+            
+            /* استایل‌های لودینگ برای موبایل کوچک */
+            .loading-logo {
+                max-width: 150px;
+                margin-bottom: 20px;
+            }
+            
+            .loading-text {
+                font-size: 2rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- لوگو بدون حاشیه و سایه -->
-    <div class="logo-container">
-        <div class="logo">
-            <img src="https://abrehamrahi.ir/o/public/C0HVUKnG/" alt="My Hero Academia Logo">
+    <!-- صفحه لودینگ -->
+    <div id="loading-screen">
+        <div class="loading-content">
+            <div class="loading-logo">
+                <img src="https://abrehamrahi.ir/o/public/C0HVUKnG/" alt="My Hero Academia Logo">
+            </div>
+            <div class="loading-text">Plus Ultra!</div>
         </div>
     </div>
 
-    <div class="container">
-        <h1>جدول پخش فصل 8</h1>
-        
-        <div class="table-container">
-            <table class="schedule-table">
-                <thead>
-                    <tr>
-                        <th>قسمت</th>
-                        <th>تاریخ پخش</th>
-                        <th>تایمر</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- ردیف ها توسط جاوااسکریپت پر می شوند -->
-                </tbody>
-            </table>
+    <!-- محتوای اصلی -->
+    <div class="main-content">
+        <!-- لوگو بدون حاشیه و سایه -->
+        <div class="logo-container">
+            <div class="logo">
+                <img src="https://abrehamrahi.ir/o/public/C0HVUKnG/" alt="My Hero Academia Logo">
+            </div>
         </div>
-        
-        <div class="footer">
-            <p><i class="far fa-clock"></i> همه زمان‌ها به وقت محلی شما نمایش داده می‌شوند</p>
+
+        <div class="container">
+            <h1>جدول پخش فصل 8</h1>
+            
+            <div class="table-container">
+                <table class="schedule-table">
+                    <tbody>
+                        <!-- ردیف ها توسط جاوااسکریپت پر می شوند -->
+                    </tbody>
+                </table>
+                
+                <!-- نکات مستقیماً به جدول چسبیده -->
+                <div class="table-notes">
+                    <p><i class="fas fa-tv"></i> انیمه در شبکه‌های Yomiuri TV و Nippon TV اکران می‌شود. برای زیرنویس فارسی آن چند ساعت صبر کنید.</p>
+                    <p class="recommendation"><i class="fas fa-star"></i> توصیه: زیرنویس آنی‌پلاس دقیق‌تر و باکیفیت‌تر بوده و لحن و اصطلاحات را به‌درستی منتقل می‌کنند.</p>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
+        // اسکریپت برای مدیریت لودینگ
+        window.addEventListener('load', function() {
+            // بعد از دو ثانیه صفحه لودینگ را مخفی می‌کنیم
+            setTimeout(function() {
+                const loadingScreen = document.getElementById('loading-screen');
+                loadingScreen.classList.add('fade-out');
+                
+                // بعد از پایان انیمیشن محو شدن، صفحه لودینگ را حذف می‌کنیم و محتوا را نمایش می‌دهیم
+                setTimeout(function() {
+                    loadingScreen.style.display = 'none';
+                    document.querySelector('.main-content').classList.add('show');
+                }, 500); // مدت زمان انیمیشن محو شدن
+            }, 2000); // مدت زمان نمایش لودینگ
+        });
+
         // Episode data - فقط تاریخ شمسی بدون کلمه "ماه"
         const episodes = [
             { number: 1, persianDate: "شنبه ۱۲ مهر" },
@@ -652,9 +790,9 @@
             "2025-12-13"
         ];
 
-        // Function to create Iran timezone date (UTC+3:30 - IRST)
+        // Function to create Iran timezone date (UTC+3:30 - IRST) - ساعت 1 بعد از ظهر
         function createIranTime(dateString) {
-            const date = new Date(dateString + 'T12:00:00'); // 12:00 PM
+            const date = new Date(dateString + 'T13:00:00'); // 1:00 PM (1 بعد از ظهر)
             return date;
         }
 
@@ -678,13 +816,13 @@
                     </div>
                 `;
                 
-                // Date cell - فقط تاریخ شمسی
+                // Date cell - فقط تاریخ شمسی - با استایل جدید (قرمز)
                 const dateCell = document.createElement('td');
                 dateCell.innerHTML = `
                     <div class="release-date">${episode.persianDate}</div>
                 `;
                 
-                // Timer cell
+                // Timer cell - با استایل جدید (ساده سفید)
                 const timerCell = document.createElement('td');
                 const timerDiv = document.createElement('div');
                 timerDiv.className = 'timer';
@@ -698,12 +836,12 @@
                 // Append row to table
                 tableBody.appendChild(row);
                 
-                // Update timer immediately - ساعت 12 ظهر به وقت ایران
+                // Update timer immediately - ساعت 1 بعد از ظهر به وقت ایران
                 updateTimer(timerDiv, gregorianDates[index], now);
             });
         }
 
-        // Function to update individual timer - فقط روز و ساعت (ساعت 12 ظهر به وقت ایران)
+        // Function to update individual timer - فقط روز و ساعت (ساعت 1 بعد از ظهر به وقت ایران)
         function updateTimer(timerElement, targetDateString, now) {
             const targetDate = createIranTime(targetDateString);
             const timeDiff = targetDate - now;
@@ -715,7 +853,8 @@
                 const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 
-                timerElement.textContent = `${days} روز, ${hours} ساعت`;
+                // تغییر فرمت از "X روز, X ساعت" به "X روز و X ساعت"
+                timerElement.textContent = `${days} روز و ${hours} ساعت`;
                 timerElement.classList.remove('expired');
             }
         }
