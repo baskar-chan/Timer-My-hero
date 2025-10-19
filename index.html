@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>برنامه زمانی پخش</title>
+    <title>برنامه زمانی پخش - قهرمان من آکادمی</title>
     
     <!-- آیکون‌ها -->
     <link rel="icon" href="https://abrehamrahi.ir/o/public/eAj5tTri/" type="image/png">
@@ -21,6 +21,13 @@
             --glass-border: rgba(255, 255, 255, 0.2);
             --glass-red: linear-gradient(135deg, rgba(212, 0, 0, 0.7), rgba(255, 51, 51, 0.5));
             --glass-yellow: rgba(255, 249, 230, 0.85);
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: auto;
         }
 
         #loading-screen {
@@ -79,6 +86,10 @@
             opacity: 0;
             transform: translateY(100px);
             transition: opacity 0.8s ease, transform 0.8s ease;
+            padding: 15px;
+            padding-bottom: 50px;
+            box-sizing: border-box;
+            margin-top: 5cm;
         }
         
         .main-content.show {
@@ -96,8 +107,6 @@
             font-family: 'Vazirmatn', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             color: #fff;
             line-height: 1.6;
-            padding: 15px;
-            margin: 0;
             min-height: 100vh;
             background:
                 radial-gradient(circle at 12% 18%, rgba(255,255,255,0.35) 0 1.6px, transparent 2px),
@@ -283,6 +292,8 @@
             padding: 2px 4px;
             box-sizing: border-box;
             line-height: 1.1;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
         .timer.expired {
@@ -298,6 +309,29 @@
             text-align: center;
             line-height: 1.1;
             font-size: 1rem;
+        }
+
+        .timer.download {
+            color: #4CAF50;
+            background-color: rgba(76, 175, 80, 0.2);
+            border-radius: 8px;
+            padding: 6px 10px;
+            display: inline-block;
+            font-weight: 700;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+            min-width: 120px;
+            box-sizing: border-box;
+            text-align: center;
+            line-height: 1.1;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(76, 175, 80, 0.5);
+        }
+
+        .timer.download:hover {
+            background-color: rgba(76, 175, 80, 0.3);
+            transform: scale(1.05);
         }
 
         .logo-container {
@@ -329,15 +363,12 @@
             margin-left: auto;
             margin-right: auto;
             box-sizing: border-box;
+            display: block !important;
+            visibility: visible !important;
         }
 
         .table-notes p {
             margin: 4px 0;
-        }
-
-        .recommendation {
-            color: #FFE500;
-            font-weight: 700;
         }
 
         @media (max-width: 768px) {
@@ -548,6 +579,16 @@
                 min-width: 100px;
                 line-height: 1.1;
             }
+
+            .timer.download {
+                color: #4CAF50;
+                background-color: rgba(76, 175, 80, 0.2);
+                border-radius: 8px;
+                padding: 5px 8px;
+                font-size: 0.85rem;
+                min-width: 100px;
+                line-height: 1.1;
+            }
             
             .logo {
                 max-width: 280px;
@@ -571,13 +612,15 @@
                 font-size: 3rem;
                 padding-right: 10px;
             }
+
+            .main-content {
+                padding: 10px;
+                padding-bottom: 40px;
+                margin-top: 2cm;
+            }
         }
 
         @media (max-width: 480px) {
-            body {
-                padding: 5px;
-            }
-            
             .container {
                 padding: 8px 11px;
             }
@@ -630,6 +673,13 @@
                 min-width: 90px;
                 line-height: 1.1;
             }
+
+            .timer.download {
+                padding: 4px 6px;
+                font-size: 0.8rem;
+                min-width: 90px;
+                line-height: 1.1;
+            }
             
             .logo {
                 max-width: 220px;
@@ -651,6 +701,12 @@
             .loading-text {
                 font-size: 2.5rem;
                 padding-right: 8px;
+            }
+
+            .main-content {
+                padding: 5px;
+                padding-bottom: 30px;
+                margin-top: 1.5cm;
             }
         }
     </style>
@@ -680,14 +736,26 @@
                 
                 <div class="table-notes">
                     <p><i class="fas fa-tv"></i> انیمه در شبکه‌های Yomiuri TV و Nippon TV اکران می‌شود. برای زیرنویس فارسی آن چند ساعت صبر کنید.</p>
-                    <p class="recommendation"><i class="fas fa-star"></i> توصیه: زیرنویس آنی‌پلاس دقیق‌تر و باکیفیت‌تر بوده و لحن و اصطلاحات را به‌درستی منتقل می‌کنند.</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        // تابع برای اطمینان از نمایش نکات
+        function ensureNotesVisibility() {
+            const notes = document.querySelector('.table-notes');
+            if (notes) {
+                notes.style.display = 'block';
+                notes.style.visibility = 'visible';
+                notes.style.opacity = '1';
+            }
+        }
+
         window.addEventListener('load', function() {
+            // اطمینان از نمایش نکات قبل از هر چیز
+            ensureNotesVisibility();
+            
             setTimeout(function() {
                 const loadingScreen = document.getElementById('loading-screen');
                 loadingScreen.classList.add('fade-out');
@@ -695,6 +763,8 @@
                 setTimeout(function() {
                     loadingScreen.style.display = 'none';
                     document.querySelector('.main-content').classList.add('show');
+                    // اطمینان مجدد از نمایش نکات پس از بارگذاری
+                    ensureNotesVisibility();
                 }, 500);
             }, 2000);
         });
@@ -764,26 +834,43 @@
                 
                 tableBody.appendChild(row);
                 
-                updateTimer(timerDiv, gregorianDates[index], now);
+                updateTimer(timerDiv, gregorianDates[index], now, episode.number);
             });
+            
+            // اطمینان از نمایش نکات پس از به‌روزرسانی جدول
+            ensureNotesVisibility();
         }
 
-        function updateTimer(timerElement, targetDateString, now) {
+        function updateTimer(timerElement, targetDateString, now, episodeNumber) {
             const targetDate = createIranTime(targetDateString);
             const timeDiff = targetDate - now;
             
             if (timeDiff <= 0) {
-                timerElement.textContent = "اکران شده!";
-                timerElement.classList.add('expired');
+                // برای قسمت‌های ۱، ۲ و ۳ "دانلود" نمایش داده شود
+                if (episodeNumber === 1 || episodeNumber === 2 || episodeNumber === 3) {
+                    timerElement.textContent = "دانلود";
+                    timerElement.classList.add('download');
+                    timerElement.classList.remove('expired');
+                    
+                    // اضافه کردن event listener برای کلیک
+                    timerElement.addEventListener('click', function() {
+                        window.location.href = 'https://baskar-chan.github.io/My-hero-Academia/';
+                    });
+                } else {
+                    timerElement.textContent = "اکران شده!";
+                    timerElement.classList.add('expired');
+                    timerElement.classList.remove('download');
+                }
             } else {
                 const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 
                 timerElement.textContent = `${days} روز و ${hours} ساعت`;
-                timerElement.classList.remove('expired');
+                timerElement.classList.remove('expired', 'download');
             }
         }
 
+        // فراخوانی اولیه و تنظیم تایمر
         updateCountdowns();
         
         setInterval(() => {
@@ -792,10 +879,10 @@
             
             timerElements.forEach((timerElement, index) => {
                 if (index < episodes.length) {
-                    updateTimer(timerElement, gregorianDates[index], now);
+                    updateTimer(timerElement, gregorianDates[index], now, episodes[index].number);
                 }
             });
         }, 1000);
     </script>
 </body>
-    </html>
+</html>
